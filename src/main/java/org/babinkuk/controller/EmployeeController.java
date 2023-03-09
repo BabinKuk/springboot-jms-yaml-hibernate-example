@@ -1,15 +1,11 @@
 package org.babinkuk.controller;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.babinkuk.service.EmployeeService;
-import org.babinkuk.validator.EmployeeValidator;
 import org.babinkuk.validator.EmployeeValidatorFactory;
 import org.babinkuk.vo.EmployeeVO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.babinkuk.common.ApiResponse;
-import org.babinkuk.entity.Employee;
 import org.babinkuk.exception.EmployeeException;
 import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.exception.EmployeeValidationException;
@@ -34,7 +30,6 @@ import java.util.Optional;
 import static org.babinkuk.controller.Api.ROOT;
 import static org.babinkuk.controller.Api.EMPLOYEES;
 
-@Slf4j
 @RestController
 @RequestMapping(ROOT + EMPLOYEES)
 public class EmployeeController {

@@ -1,7 +1,5 @@
 package org.babinkuk.listener;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.babinkuk.service.EmployeeService;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Slf4j
 @Component
 public class EmployeeListener {
 	

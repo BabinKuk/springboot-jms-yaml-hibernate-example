@@ -1,7 +1,5 @@
 package org.babinkuk.controller;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.babinkuk.common.ApiResponse;
 import org.babinkuk.common.Echo;
 import org.babinkuk.common.ProducesJson;
@@ -18,7 +16,6 @@ import static org.babinkuk.controller.Api.ROOT;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping(ROOT)
 public class CommonController {

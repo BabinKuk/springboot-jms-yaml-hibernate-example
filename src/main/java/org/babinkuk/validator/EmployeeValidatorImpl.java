@@ -9,6 +9,7 @@ import org.babinkuk.entity.Employee;
 import org.babinkuk.exception.EmployeeException;
 import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.exception.EmployeeValidationException;
+import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,32 +22,32 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 	private EmployeeValidatorHelper validatorHelper;
 	
 	@Override
-	public Employee validate(Employee employee, boolean isInsert) throws EmployeeValidationException {
+	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert) throws EmployeeValidationException {
 		log.info("validating employee");
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
 		try {
-			validatorHelper.validateFirstName(employee.getFirstName());
+			validatorHelper.validateFirstName(employeeVO.getFirstName());
 		} catch (ValidatorException e) {
 			exceptionList.add(e);
 		}
 		
 		try {
-			validatorHelper.validateLastName(employee.getLastName());
+			validatorHelper.validateLastName(employeeVO.getLastName());
 		} catch (ValidatorException e) {
 			exceptionList.add(e);
 		}
 		
 		try {
-			validatorHelper.validateEmail(employee);
+			validatorHelper.validateEmail(employeeVO);
 		} catch (ValidatorException e) {
 			exceptionList.add(e);
 		}
 		
 		if (!isInsert) {
 			try {
-				validatorHelper.employeeExists(employee);
+				validatorHelper.employeeExists(employeeVO);
 			} catch (ValidatorException e) {
 				exceptionList.add(e);
 			}
@@ -63,23 +64,23 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 			throw e;
 		}
 		
-		return employee;
+		return employeeVO;
 	}
 
 	@Override
-	public Employee validate(int employeeId) throws EmployeeNotFoundException {
+	public EmployeeVO validate(int employeeId) throws EmployeeNotFoundException {
 		log.info("Validating employee(employeeId={})", employeeId);
 		
-		Employee employee = null;
+		EmployeeVO employeeVO = null;
 		
 		try {
-			employee = validatorHelper.employeeExists(employeeId);
+			employeeVO = validatorHelper.employeeExists(employeeId);
 		} catch (EmployeeNotFoundException e) {
 			log.error(e.getMessage());
 			throw e;
 		}
 		
-		return employee;
+		return employeeVO;
 	}
 
 }

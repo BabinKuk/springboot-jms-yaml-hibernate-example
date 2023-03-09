@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.babinkuk.entity.Employee;
 import org.babinkuk.service.EmployeeService;
+import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -30,10 +30,10 @@ public class EmployeeListener {
 	}
     
 	@JmsListener(destination = "${emp.jms.topic}", containerFactory = "empJmsContFactory")
-	public void getEmployeeListener1(Employee emp) throws JsonProcessingException {
-		log.info("Employee topic listener1: {}", mapper.writeValueAsString(emp));
+	public void getEmployeeListener1(EmployeeVO empVO) throws JsonProcessingException {
+		log.info("Employee topic listener1: {}", mapper.writeValueAsString(empVO));
 		
-		processEmployee(emp);
+		processEmployee(empVO);
 	}
 	
 //	@JmsListener(destination = "${emp.jms.topic}", containerFactory = "empJmsContFactory")
@@ -44,10 +44,10 @@ public class EmployeeListener {
 //	}
 	
 	@JmsListener(destination = "${emp.jms.queue}")
-	public void getEmployeeQueueListener1(Employee emp) throws JsonProcessingException {
-		log.info("Employee queue listener1: {}", mapper.writeValueAsString(emp));
+	public void getEmployeeQueueListener1(EmployeeVO empVO) throws JsonProcessingException {
+		log.info("Employee queue listener1: {}", mapper.writeValueAsString(empVO));
 		
-		processEmployee(emp);
+		processEmployee(empVO);
 	}
 	
 //	@JmsListener(destination = "${emp.jms.queue}")
@@ -57,13 +57,13 @@ public class EmployeeListener {
 //		processEmployee(emp);
 //	}
 	
-	public void processEmployee(Employee employee) throws JsonProcessingException {
-		log.info("Employee processing: {}", mapper.writeValueAsString(employee));
+	public void processEmployee(EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Employee processing: {}", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
-		employee.setId(0);
+		employeeVO.setId(0);
 		
-		employeeService.saveEmployee(employee);
+		employeeService.saveEmployee(employeeVO);
 	}
 }

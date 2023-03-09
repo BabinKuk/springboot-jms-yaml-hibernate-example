@@ -3,9 +3,9 @@ openApi: 3.0.3
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: <<ENTER DB URL>>
-    username: <<USER>>
-    password: <<PASSWORD>>
+    url: jdbc:mysql://localhost:3306/employee_directory?useSSL=false&serverTimezone=UTC
+    username: hbstudent
+    password: hbstudent
   profiles:
     active: #{spring.profiles.active}
   application:

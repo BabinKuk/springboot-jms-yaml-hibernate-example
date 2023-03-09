@@ -11,6 +11,7 @@ import org.babinkuk.dao.EmployeeRepository;
 import org.babinkuk.entity.Employee;
 import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.service.EmployeeService;
+import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +46,10 @@ public class EmployeeValidatorHelper {
 	 * @param email
 	 * @throws ValidationException
 	 */
-	public void validateEmail(Employee employee) throws ValidatorException {
-		validateStringIsBlank(employee.getEmail(), ValidatorCodes.ERROR_CODE_EMAIL_EMPTY);
-		validateEmailFormat(employee.getEmail(), ValidatorCodes.ERROR_CODE_EMAIL_INVALID);
-		employeeEmailExists(employee);
+	public void validateEmail(EmployeeVO employeeVO) throws ValidatorException {
+		validateStringIsBlank(employeeVO.getEmailAddress(), ValidatorCodes.ERROR_CODE_EMAIL_EMPTY);
+		validateEmailFormat(employeeVO.getEmailAddress(), ValidatorCodes.ERROR_CODE_EMAIL_INVALID);
+		employeeEmailExists(employeeVO);
 	}
 	
 	/**
@@ -85,15 +86,15 @@ public class EmployeeValidatorHelper {
 
 	/**
 	 * validate if email already exist must be unique (call repository findbyemail)
-	 * @param employee
+	 * @param employeeVO
 	 * @param isInsert
 	 * @return
 	 * @throws ValidatorException
 	 */
-	public void employeeEmailExists(Employee employee) throws ValidatorException {
+	public void employeeEmailExists(EmployeeVO employeeVO) throws ValidatorException {
 		//validateStringIsBlank(employee, ValidatorCodes.ERROR_CODE_EMPLOYEE_INVALID);
 		
-		Employee dbEmployee = employeeService.findByEmail(employee.getEmail());
+		EmployeeVO dbEmployee = employeeService.findByEmail(employeeVO.getEmailAddress());
 		
 		if (dbEmployee == null) {
 			// employee email not found
@@ -104,7 +105,7 @@ public class EmployeeValidatorHelper {
 			//throw new EmployeeNotFoundException(message);
 		} else {
 			log.info("employee email found");
-			if (dbEmployee.getId() == employee.getId()) {
+			if (dbEmployee.getId() == employeeVO.getId()) {
 				// employee email has not changed
 				log.info("employee email has not changed");
 			} else {
@@ -122,9 +123,9 @@ public class EmployeeValidatorHelper {
 	 * @return
 	 * @throws ValidatorException
 	 */
-	public void employeeExists(Employee employee) throws ValidatorException {
+	public void employeeExists(EmployeeVO employeeVO) throws ValidatorException {
 		
-		Employee result = employeeService.findById(employee.getId());
+		EmployeeVO result = employeeService.findById(employeeVO.getId());
 		
 		log.info("validate employee on update");
 		if (result != null) {
@@ -153,17 +154,17 @@ public class EmployeeValidatorHelper {
 	 * @return
 	 * @throws EmployeeNotFoundException
 	 */
-	public Employee employeeExists(int id) throws EmployeeNotFoundException {
+	public EmployeeVO employeeExists(int id) throws EmployeeNotFoundException {
 		
-		Employee employee = employeeService.findById(id);
+		EmployeeVO employeeVO = employeeService.findById(id);
 		
-		if (employee == null) {
+		if (employeeVO == null) {
 			String message = String.format("Employee with id=%s not found.", id);
 			log.warn(message);
 			throw new EmployeeNotFoundException(message);
 		}
 		
-		return employee;
+		return employeeVO;
 	}
 
 }

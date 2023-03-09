@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.babinkuk.service.EmployeeService;
 import org.babinkuk.validator.EmployeeValidator;
 import org.babinkuk.validator.EmployeeValidatorFactory;
+import org.babinkuk.vo.EmployeeVO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.babinkuk.common.ApiResponse;
@@ -61,23 +62,23 @@ public class EmployeeController {
 	/**
 	 * Create new employee (using topic)
 	 *
-	 * @param employee
+	 * @param employeeVO
 	 * @return ResponseEntity
 	 */
 	@PostMapping("/topic")
-	public ResponseEntity<ApiResponse> addEmployeeTopic(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.addEmployeeTopic({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> addEmployeeTopic(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.addEmployeeTopic({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
-		employee.setId(0);
+		employeeVO.setId(0);
 		
-		employee = validatorFactory.getValidator().validate(employee, true);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
 		
 		try {
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
 			//return ResponseEntity.ok().body(employeeResponse);
-			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employee, true)));
+			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, true)));
 			
 		} catch (Exception exception) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,18 +88,18 @@ public class EmployeeController {
 	/**
 	 * Create new employee (using queue)
 	 *
-	 * @param employee
+	 * @param employeeVO
 	 * @return ResponseEntity
 	 */
 	@PostMapping("/queue")
-	public ResponseEntity<ApiResponse> addEmployeeQueue(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.addEmployeeQueue({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> addEmployeeQueue(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.addEmployeeQueue({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
-		employee.setId(0);
+		employeeVO.setId(0);
 		
-		employee = validatorFactory.getValidator().validate(employee, true);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
 				
 		try {
 //			Employee emp = new Employee(
@@ -108,7 +109,7 @@ public class EmployeeController {
 			
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
 			//return ResponseEntity.ok().body(employeeResponse);
-			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employee, false)));
+			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, false)));
 			
 		} catch (Exception exception) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -118,18 +119,18 @@ public class EmployeeController {
 	/**
 	 * expose PUT "/employees/topic"
 	 * 
-	 * @param employee
+	 * @param employeeVO
 	 * @return
 	 * @throws JsonProcessingException
 	 */
 	@PutMapping("/topic")
-	public ResponseEntity<ApiResponse> updateEmployeeTopic(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.updateEmployeeTopic({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> updateEmployeeTopic(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.updateEmployeeTopic({})", mapper.writeValueAsString(employeeVO));
 
-		employee = validatorFactory.getValidator().validate(employee, false);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
 		
 		try {
-			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employee, true)));
+			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, true)));
 
 		} catch (Exception exception) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,18 +140,18 @@ public class EmployeeController {
 	/**
 	 * expose PUT "/employees/queue"
 	 * 
-	 * @param employee
+	 * @param employeeVO
 	 * @return
 	 * @throws JsonProcessingException
 	 */
 	@PutMapping("/queue")
-	public ResponseEntity<ApiResponse> updateEmployeeQueue(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.updateEmployeeQueue({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> updateEmployeeQueue(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.updateEmployeeQueue({})", mapper.writeValueAsString(employeeVO));
 
-		employee = validatorFactory.getValidator().validate(employee, false);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
 		
 		try {
-			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employee, false)));
+			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, false)));
 			
 		} catch (Exception exception) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -165,7 +166,7 @@ public class EmployeeController {
 	 */
 	@GetMapping("/get")
 	//public ResponseEntity<Iterable<Employee>> getAllEmployees() {
-	public ResponseEntity<Iterable<Employee>> getAllEmployees() {
+	public ResponseEntity<Iterable<EmployeeVO>> getAllEmployees() {
 		log.info("Called EmployeeController.getAllEmployees");
 		//return new ResponseEntity<>(employeeService.findAll(), HttpStatus.OK);
 		//return ResponseEntity.ok().body(employeeService.findAll());
@@ -174,7 +175,7 @@ public class EmployeeController {
 	
 	// expose GET "/employees/{employeeId}"
 	@GetMapping("/get/{employeeId}")
-	public ResponseEntity<Employee> getEmployee(@PathVariable int employeeId) {
+	public ResponseEntity<EmployeeVO> getEmployee(@PathVariable int employeeId) {
 		log.info("Called EmployeeController.getEmployee(employeeId={})", employeeId);
 		
 		//return new ResponseEntity<>(employee, HttpStatus.OK);
@@ -184,25 +185,25 @@ public class EmployeeController {
 	
 	// expose POST "/employees"
 	@PostMapping("")
-	public ResponseEntity<ApiResponse> addEmployee(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.addEmployee({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.addEmployee({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
-		employee.setId(0);
+		employeeVO.setId(0);
 		
-		employee = validatorFactory.getValidator().validate(employee, true);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
 		
 		//return employee;
-		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employee)));
+		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
 	}
 	
 	// expose PUT "/employees"
 	@PutMapping("")
-	public ResponseEntity<ApiResponse> updateEmployee(@RequestBody Employee employee) throws JsonProcessingException {
-		log.info("Called EmployeeController.updateEmployee({})", mapper.writeValueAsString(employee));
+	public ResponseEntity<ApiResponse> updateEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+		log.info("Called EmployeeController.updateEmployee({})", mapper.writeValueAsString(employeeVO));
 
-		employee = validatorFactory.getValidator().validate(employee, false);
+		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
 
 //		Employee dbEmployee = employeeService.findById(employee.getId());
 //		
@@ -211,7 +212,7 @@ public class EmployeeController {
 //		}
 		
 		//return employee;
-		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employee)));
+		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
 	}
 	
 	// expose DELETE "/{employeeId}""
@@ -219,7 +220,7 @@ public class EmployeeController {
 	public ResponseEntity<ApiResponse> deleteEmployee(@PathVariable int employeeId) {
 		log.info("Called EmployeeController.deleteEmployee(employeeId={})", employeeId);
 		
-		Employee employee = validatorFactory.getValidator().validate(employeeId);
+		EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
 		
 		return ResponseEntity.of(Optional.ofNullable(employeeService.deleteEmployee(employeeId)));
 	}

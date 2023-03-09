@@ -13,7 +13,8 @@ import org.babinkuk.dao.EmployeeRepository;
 import org.babinkuk.entity.Employee;
 import org.babinkuk.exception.EmployeeException;
 import org.babinkuk.exception.EmployeeNotFoundException;
-import org.babinkuk.validator.EmployeeValidator;
+import org.babinkuk.mapper.EmployeeMapper;
+import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -48,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private ObjectMapper mapper;
 		
 	@Autowired
-	private EmployeeValidator validator;
+	private EmployeeMapper employeeMapper;
 	
 	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
@@ -56,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public Employee findById(int id) throws EmployeeNotFoundException {
+	public EmployeeVO findById(int id) throws EmployeeNotFoundException {
 		
 		Optional<Employee> result = employeeRepository.findById(id);
 		
@@ -64,24 +64,35 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		if (result.isPresent()) {
 			employee = result.get();
+			
+			// mapping
+			EmployeeVO employeeVO = employeeMapper.toVO(employee);
+			log.info("empVO ({})", employeeVO);
+			
+			return employeeVO;
 		} else {
 			// employee not found
 			String message = String.format("Employee with id=%s not found.", id);
 			log.warn(message);
 			throw new EmployeeNotFoundException(message);
 		}
-
-		return employee;
 	}
 	
 	@Override
-	public Employee findByEmail(String email) throws EmployeeNotFoundException {
+	public EmployeeVO findByEmail(String email) throws EmployeeNotFoundException {
+		
+		EmployeeVO employeeVO = null;
+		
 		Optional<Employee> result = employeeRepository.findByEmail(email);
 		
 		Employee employee = null;
 		
 		if (result.isPresent()) {
 			employee = result.get();
+			
+			// mapping
+			employeeVO = employeeMapper.toVO(employee);
+			log.info("empVO ({})", employeeVO);
 		} else {
 			// employee not found
 			String message = String.format("Employee with email=%s not found.", email);
@@ -89,17 +100,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 			//throw new EmployeeNotFoundException(message);
 		}
 
-		return employee;
+		return employeeVO;
 	}
-	
-	
+		
 	@Override
-	public ApiResponse saveEmployee(Employee employee) throws EmployeeException {
+	public ApiResponse saveEmployee(EmployeeVO employeeVO) throws EmployeeException {
 		
 		ApiResponse response = new ApiResponse();
 		
 		response.setStatus(HttpStatus.OK);
 		response.setMessage(EMPLOYEE_SAVE_SUCCESS);
+		
+		Employee employee = null;
+		
+		// mapping
+		employee = employeeMapper.toEntity(employeeVO);
+		log.info("employee ({})", employee);
 		
 //		employee = validator.validate(employee, isInsert);
 		
@@ -135,12 +151,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public Iterable<Employee> getAllEmployees() {
-		return employeeRepository.findAll();
+	public Iterable<EmployeeVO> getAllEmployees() {
+		return employeeMapper.toVO(employeeRepository.findAll());
 	}
 
 	@Override
-	public ApiResponse sendEmployee(Employee employee, boolean isTopicDestination) {
+	public ApiResponse sendEmployee(EmployeeVO employeeVO, boolean isTopicDestination) {
 		
 		ApiResponse response = new ApiResponse();
 		
@@ -148,16 +164,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Queue empQueue;
 		
 		try {
-			log.info("Sending Employee({})", mapper.writeValueAsString(employee));
+			log.info("Sending Employee({})", mapper.writeValueAsString(employeeVO));
 			
 			if (isTopicDestination) {
 				empTopic = jmsTemplate.getConnectionFactory().createConnection()
 						.createSession().createTopic("EmpTopic");
-				jmsTemplate.convertAndSend(empTopic, employee);
+				jmsTemplate.convertAndSend(empTopic, employeeVO);
 			} else {
 				empQueue = jmsTemplate.getConnectionFactory().createConnection()
 						.createSession().createQueue("EmpQueue");
-				jmsTemplate.convertAndSend(empQueue, employee);
+				jmsTemplate.convertAndSend(empQueue, employeeVO);
 			}
 			response.setStatus(HttpStatus.OK);
 	        response.setMessage(MESSAGE_SUCCESS);

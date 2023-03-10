@@ -63,14 +63,16 @@ public class EmployeeController {
 	 * @return ResponseEntity
 	 */
 	@PostMapping("/topic")
-	public ResponseEntity<ApiResponse> addEmployeeTopic(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> addEmployeeTopic(
+			@RequestBody EmployeeVO employeeVO,
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.addEmployeeTopic({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
 		
 		try {
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
@@ -89,14 +91,16 @@ public class EmployeeController {
 	 * @return ResponseEntity
 	 */
 	@PostMapping("/queue")
-	public ResponseEntity<ApiResponse> addEmployeeQueue(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> addEmployeeQueue(
+			@RequestBody EmployeeVO employeeVO, 
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.addEmployeeQueue({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
 				
 		try {
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
@@ -116,10 +120,12 @@ public class EmployeeController {
 	 * @throws JsonProcessingException
 	 */
 	@PutMapping("/topic")
-	public ResponseEntity<ApiResponse> updateEmployeeTopic(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> updateEmployeeTopic(
+			@RequestBody EmployeeVO employeeVO,
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployeeTopic({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
 		
 		try {
 			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, true)));
@@ -137,10 +143,12 @@ public class EmployeeController {
 	 * @throws JsonProcessingException
 	 */
 	@PutMapping("/queue")
-	public ResponseEntity<ApiResponse> updateEmployeeQueue(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> updateEmployeeQueue(
+			@RequestBody EmployeeVO employeeVO, 
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployeeQueue({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
 		
 		try {
 			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, false)));
@@ -187,14 +195,16 @@ public class EmployeeController {
 	 * @throws JsonProcessingException
 	 */
 	@PostMapping("")
-	public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> addEmployee(
+			@RequestBody EmployeeVO employeeVO,
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.addEmployee({})", mapper.writeValueAsString(employeeVO));
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
 		
 		//return employee;
 		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
@@ -208,10 +218,12 @@ public class EmployeeController {
 	 * @throws JsonProcessingException
 	 */
 	@PutMapping("")
-	public ResponseEntity<ApiResponse> updateEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
+	public ResponseEntity<ApiResponse> updateEmployee(
+			@RequestBody EmployeeVO employeeVO,
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployee({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator().validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
 
 //		Employee dbEmployee = employeeService.findById(employee.getId());
 //		
@@ -230,14 +242,16 @@ public class EmployeeController {
 	 * @return
 	 */
 	@DeleteMapping("/{employeeId}")
-	public ResponseEntity<ApiResponse> deleteEmployee(@PathVariable int employeeId, @RequestParam(name="validationType", required = false) ValidatorType validationType) {
+	public ResponseEntity<ApiResponse> deleteEmployee(
+			@PathVariable int employeeId, 
+			@RequestParam(name="validationType", required = false) ValidatorType validationType) {
 		log.info("Called EmployeeController.deleteEmployee(employeeId={}, validationType={})", employeeId, validationType);
 		
-		if (validationType != null) {
+		//if (validationType != null) {
 			EmployeeVO employeeVO = validatorFactory.getValidator(validationType).validate(employeeId);
-		} else {
-			EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
-		}
+		//} else {
+		//	EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
+		//}
 		
 		return ResponseEntity.of(Optional.ofNullable(employeeService.deleteEmployee(employeeId)));
 	}

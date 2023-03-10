@@ -11,7 +11,7 @@ import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("validator.BASIC")
 public class EmployeeValidatorImpl implements EmployeeValidator {
 	
 	private final Logger log = LogManager.getLogger(getClass());
@@ -25,6 +25,9 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
+		exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
+		
+		/*
 		try {
 			validatorHelper.validateFirstName(employeeVO.getFirstName());
 		} catch (ValidatorException e) {
@@ -61,7 +64,7 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 		if (e.hasErrors()) {
 			throw e;
 		}
-		
+		*/
 		return employeeVO;
 	}
 
@@ -72,7 +75,7 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 		EmployeeVO employeeVO = null;
 		
 		try {
-			employeeVO = validatorHelper.employeeExists(employeeId);
+			employeeVO = validatorHelper.validate(employeeId);
 		} catch (EmployeeNotFoundException e) {
 			log.error(e.getMessage());
 			throw e;

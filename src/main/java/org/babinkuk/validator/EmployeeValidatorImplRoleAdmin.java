@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
  * @author Nikola
  *
  */
-@Component("validator.ROLE_EMPLOYEE")
-public class EmployeeValidatorRoleEmployee implements EmployeeValidator {
+@Component("validator.ROLE_ADMIN")
+public class EmployeeValidatorImplRoleAdmin implements EmployeeValidator {
 
 private final Logger log = LogManager.getLogger(getClass());
 	
@@ -28,10 +28,12 @@ private final Logger log = LogManager.getLogger(getClass());
 	
 	@Override
 	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert) throws EmployeeValidationException {
-		log.info("ROLE_EMPLOYEE validating employee");
+		log.info("ROLE_ADMIN validating employee");
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
+		exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
+		/*
 		try {
 			validatorHelper.validateFirstName(employeeVO.getFirstName());
 		} catch (ValidatorException e) {
@@ -68,18 +70,18 @@ private final Logger log = LogManager.getLogger(getClass());
 		if (e.hasErrors()) {
 			throw e;
 		}
-		
+		*/
 		return employeeVO;
 	}
 
 	@Override
 	public EmployeeVO validate(int employeeId) throws EmployeeNotFoundException {
-		log.info("ROLE_EMPLOYEE Validating employee(employeeId={})", employeeId);
+		log.info("ROLE_ADMIN Validating employee(employeeId={})", employeeId);
 		
 		EmployeeVO employeeVO = null;
 		
 		try {
-			employeeVO = validatorHelper.employeeExists(employeeId);
+			employeeVO = validatorHelper.validate(employeeId);
 		} catch (EmployeeNotFoundException e) {
 			log.error(e.getMessage());
 			throw e;

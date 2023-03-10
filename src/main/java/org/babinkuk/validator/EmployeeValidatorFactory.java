@@ -12,7 +12,7 @@ public class EmployeeValidatorFactory {
 	
 	public EmployeeValidator getValidator(ValidatorType type) {
 		
-		EmployeeValidator validator = applicationContext.getBean("validator" + type, EmployeeValidator.class);
+		EmployeeValidator validator = applicationContext.getBean("validator." + type, EmployeeValidator.class);
 		
 		if (validator == null) {
 			throw new IllegalStateException("Cannot acquire validator instance for type : " + type);

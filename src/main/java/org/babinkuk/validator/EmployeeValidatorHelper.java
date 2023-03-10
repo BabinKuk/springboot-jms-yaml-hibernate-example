@@ -1,14 +1,11 @@
 package org.babinkuk.validator;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.babinkuk.dao.EmployeeRepository;
-import org.babinkuk.entity.Employee;
 import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.service.EmployeeService;
 import org.babinkuk.vo.EmployeeVO;
@@ -19,9 +16,6 @@ import org.springframework.stereotype.Component;
 public class EmployeeValidatorHelper {
 	
 	private final Logger log = LogManager.getLogger(getClass());
-	
-	@Autowired
-	private EmployeeRepository employeeRepository;
 	
 	@Autowired
 	private EmployeeService employeeService;
@@ -85,7 +79,7 @@ public class EmployeeValidatorHelper {
 	}
 
 	/**
-	 * validate if email already exist must be unique (call repository findbyemail)
+	 * validate if email already exist must be unique (call repository findByEmail)
 	 * @param employeeVO
 	 * @param isInsert
 	 * @return
@@ -98,18 +92,15 @@ public class EmployeeValidatorHelper {
 		
 		if (dbEmployee == null) {
 			// employee email not found
-//			// that's ok
+			// that's ok
 			log.info("employee email not found");
-			//String message = String.format("Employee with id=%s not found.", id);
-			//log.warn(message);
-			//throw new EmployeeNotFoundException(message);
 		} else {
 			log.info("employee email found");
 			if (dbEmployee.getId() == employeeVO.getId()) {
-				// employee email has not changed
-				log.info("employee email has not changed");
+				// same employee, email has not changed
+				log.info("belongs to same employee, email has not changed");
 			} else {
-				// employee with same email already exists in db
+				// another employee with same email already exists in db
 				log.error(ValidatorCodes.ERROR_CODE_EMAIL_ALREADY_EXIST.getMessage());
 				throw new ValidatorException(ValidatorCodes.ERROR_CODE_EMAIL_ALREADY_EXIST);
 			}

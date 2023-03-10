@@ -1,6 +1,5 @@
 package org.babinkuk.mapper;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,8 +15,8 @@ import org.mapstruct.factory.Mappers;
 
 /**
  * mapper for the entity @link {@link Employee} and its DTO {@link EmployeeVO}
+ * 
  * @author Nikola
- *
  */
 @Mapper
 (
@@ -28,7 +27,7 @@ import org.mapstruct.factory.Mappers;
 )
 public interface EmployeeMapper {
 	
-	//public EmployeeMapper employeeMapperInstance = Mappers.getMapper(EmployeeMapper.class);
+	public EmployeeMapper employeeMapperInstance = Mappers.getMapper(EmployeeMapper.class);
 	
 	@Named("toEntity")
 	@Mapping(source = "emailAddress", target = "email")

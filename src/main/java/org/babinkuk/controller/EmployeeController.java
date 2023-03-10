@@ -2,6 +2,7 @@ package org.babinkuk.controller;
 
 import org.babinkuk.service.EmployeeService;
 import org.babinkuk.validator.EmployeeValidatorFactory;
+import org.babinkuk.validator.ValidatorType;
 import org.babinkuk.vo.EmployeeVO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -97,11 +99,6 @@ public class EmployeeController {
 		employeeVO = validatorFactory.getValidator().validate(employeeVO, true);
 				
 		try {
-//			Employee emp = new Employee(
-//					employee.getFirstName(),
-//					employee.getLastName(),
-//					employee.getEmail());
-			
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
 			//return ResponseEntity.ok().body(employeeResponse);
 			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, false)));
@@ -160,7 +157,6 @@ public class EmployeeController {
 	 * @return ResponseEntity
 	 */
 	@GetMapping("/get")
-	//public ResponseEntity<Iterable<Employee>> getAllEmployees() {
 	public ResponseEntity<Iterable<EmployeeVO>> getAllEmployees() {
 		log.info("Called EmployeeController.getAllEmployees");
 		//return new ResponseEntity<>(employeeService.findAll(), HttpStatus.OK);
@@ -168,7 +164,12 @@ public class EmployeeController {
 		return ResponseEntity.of(Optional.ofNullable(employeeService.getAllEmployees()));
 	}
 	
-	// expose GET "/employees/{employeeId}"
+	/**
+	 * expose GET "/employees/{employeeId}"
+	 *
+	 * @param 
+	 * @return ResponseEntity
+	 */
 	@GetMapping("/get/{employeeId}")
 	public ResponseEntity<EmployeeVO> getEmployee(@PathVariable int employeeId) {
 		log.info("Called EmployeeController.getEmployee(employeeId={})", employeeId);
@@ -178,7 +179,13 @@ public class EmployeeController {
 		return ResponseEntity.of(Optional.ofNullable(employeeService.findById(employeeId)));
 	}
 	
-	// expose POST "/employees"
+	/**
+	 * expose POST "/employees"
+	 * 
+	 * @param employeeVO
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@PostMapping("")
 	public ResponseEntity<ApiResponse> addEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
 		log.info("Called EmployeeController.addEmployee({})", mapper.writeValueAsString(employeeVO));
@@ -193,7 +200,13 @@ public class EmployeeController {
 		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
 	}
 	
-	// expose PUT "/employees"
+	/**
+	 * expose PUT "/employees"
+	 * 
+	 * @param employeeVO
+	 * @return
+	 * @throws JsonProcessingException
+	 */
 	@PutMapping("")
 	public ResponseEntity<ApiResponse> updateEmployee(@RequestBody EmployeeVO employeeVO) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployee({})", mapper.writeValueAsString(employeeVO));
@@ -210,12 +223,21 @@ public class EmployeeController {
 		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
 	}
 	
-	// expose DELETE "/{employeeId}""
+	/**
+	 * expose DELETE "/{employeeId}"
+	 * 
+	 * @param employeeId
+	 * @return
+	 */
 	@DeleteMapping("/{employeeId}")
-	public ResponseEntity<ApiResponse> deleteEmployee(@PathVariable int employeeId) {
-		log.info("Called EmployeeController.deleteEmployee(employeeId={})", employeeId);
+	public ResponseEntity<ApiResponse> deleteEmployee(@PathVariable int employeeId, @RequestParam(name="validationType", required = false) ValidatorType validationType) {
+		log.info("Called EmployeeController.deleteEmployee(employeeId={}, validationType={})", employeeId, validationType);
 		
-		EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
+		if (validationType != null) {
+			EmployeeVO employeeVO = validatorFactory.getValidator(validationType).validate(employeeId);
+		} else {
+			EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
+		}
 		
 		return ResponseEntity.of(Optional.ofNullable(employeeService.deleteEmployee(employeeId)));
 	}
@@ -245,38 +267,4 @@ public class EmployeeController {
 		return apiResponse.toEntity();
 	}
 	
-////	@ExceptionHandler
-////    public ResponseEntity<EmployeeErrorResponse> handleResponseMessage(String message) {
-////
-////        EmployeeErrorResponse responseMsg = new EmployeeErrorResponse();
-////
-////        responseMsg.setStatus(HttpStatus.OK.value());
-////        responseMsg.setMessage(message);
-////        responseMsg.setTimeStamp(System.currentTimeMillis());
-////
-////        return new ResponseEntity<>(responseMsg, HttpStatus.OK);
-////    }
-//	
-////    @ExceptionHandler
-////    public ResponseEntity<EmployeeResponse> handleException(Exception exc) {
-////
-////        EmployeeResponse error = new EmployeeResponse();
-////
-////        error.setStatus(HttpStatus.BAD_REQUEST.value());
-////        error.setMessage(exc.getMessage());
-////        
-////        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-////    }
-////    
-////    @ExceptionHandler
-////    public ResponseEntity<EmployeeResponse> handleException(EmployeeException exc) {
-////
-////        EmployeeResponse error = new EmployeeResponse();
-////
-////        error.setStatus(HttpStatus.NOT_FOUND.value());
-////        error.setMessage(exc.getMessage());
-////        
-////        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-////    }
-
 }

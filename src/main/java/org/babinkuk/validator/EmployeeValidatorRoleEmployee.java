@@ -11,17 +11,24 @@ import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
-public class EmployeeValidatorImpl implements EmployeeValidator {
-	
-	private final Logger log = LogManager.getLogger(getClass());
+/**
+ * for future purpose 
+ * if special valdations are required depending on the role 
+ * 
+ * @author Nikola
+ *
+ */
+@Component("validator.ROLE_EMPLOYEE")
+public class EmployeeValidatorRoleEmployee implements EmployeeValidator {
+
+private final Logger log = LogManager.getLogger(getClass());
 	
 	@Autowired
 	private EmployeeValidatorHelper validatorHelper;
 	
 	@Override
 	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert) throws EmployeeValidationException {
-		log.info("validating employee");
+		log.info("ROLE_EMPLOYEE validating employee");
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
@@ -67,7 +74,7 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 
 	@Override
 	public EmployeeVO validate(int employeeId) throws EmployeeNotFoundException {
-		log.info("Validating employee(employeeId={})", employeeId);
+		log.info("ROLE_EMPLOYEE Validating employee(employeeId={})", employeeId);
 		
 		EmployeeVO employeeVO = null;
 		
@@ -80,5 +87,6 @@ public class EmployeeValidatorImpl implements EmployeeValidator {
 		
 		return employeeVO;
 	}
+
 
 }

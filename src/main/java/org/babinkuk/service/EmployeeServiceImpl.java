@@ -31,15 +31,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private static String MESSAGE_SUCCESS = "Employee JMS sending success";
 	private static String MESSAGE_FAILED = "Employee JMS sending failed";
 	private static String EMPLOYEE_SAVE_SUCCESS = "Employee saving success";
-	private static String EMPLOYEE_SAVE_FAILED = "Employee saving failed";
 	private static String EMPLOYEE_DELETE_SUCCESS = "Employee delete success";
-	private static String EMPLOYEE_DELETE_FAILED = "Employee delete failed";
 	
+	@Autowired
 	private EmployeeRepository employeeRepository;
-	
-	public EmployeeServiceImpl() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	@Autowired
 	JmsTemplate jmsTemplate;
@@ -53,6 +48,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
 		this.employeeRepository = employeeRepository;
+	}
+	
+	public EmployeeServiceImpl() {
+		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -117,8 +116,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employee = employeeMapper.toEntity(employeeVO);
 		log.info("employee ({})", employee);
 		
-//		employee = validator.validate(employee, isInsert);
-		
 		employeeRepository.save(employee);
 		
 		return response;
@@ -131,19 +128,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		response.setStatus(HttpStatus.OK);
 		response.setMessage(EMPLOYEE_DELETE_SUCCESS);
-		
-//		Optional<Employee> result = employeeRepository.findById(id);
-//		
-//		Employee employee = null;
-//		
-//		if (result.isPresent()) {
-//			employee = result.get();
-//		} else {
-//			// employee not found
-//			String message = String.format("Employee with id=%s not found.", id);
-//			log.warn(message);
-//			throw new EmployeeNotFoundException(message);
-//		}
 		
 		employeeRepository.deleteById(id);
 		
@@ -179,13 +163,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	        response.setMessage(MESSAGE_SUCCESS);
 	        
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 	        response.setMessage(MESSAGE_FAILED);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);

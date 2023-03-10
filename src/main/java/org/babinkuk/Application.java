@@ -2,6 +2,7 @@ package org.babinkuk;
 
 import java.text.MessageFormat;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.EnvironmentCapable;
 
+/**
+ * used to bootstrap and initialize application
+ * 
+ * @author Nikola
+ *
+ */
 @SpringBootApplication
 public class Application {
 	

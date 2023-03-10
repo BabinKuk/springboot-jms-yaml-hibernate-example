@@ -1,5 +1,12 @@
 package org.babinkuk.vo;
 
+
+/**
+ * instance of this class is used to represent employee data
+ * 
+ * @author Nikola
+ *
+ */
 public class EmployeeVO {
 	
 	private int id;

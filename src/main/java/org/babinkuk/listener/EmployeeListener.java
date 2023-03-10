@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author Nikola
+ *
+ */
 @Component
 public class EmployeeListener {
 	
@@ -19,16 +23,22 @@ public class EmployeeListener {
 	@Autowired
 	private ObjectMapper mapper;
 	
-	// employee service
+	@Autowired
 	private EmployeeService employeeService;
 	
 	public EmployeeListener(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
     
+	/**
+	 * JMS topic message listener implemenatation
+	 * 
+	 * @param empVO
+	 * @throws JsonProcessingException
+	 */
 	@JmsListener(destination = "${emp.jms.topic}", containerFactory = "empJmsContFactory")
-	public void getEmployeeListener1(EmployeeVO empVO) throws JsonProcessingException {
-		log.info("Employee topic listener1: {}", mapper.writeValueAsString(empVO));
+	public void getEmployeeTopicListener(EmployeeVO empVO) throws JsonProcessingException {
+		log.info("Employee topic listener: {}", mapper.writeValueAsString(empVO));
 		
 		processEmployee(empVO);
 	}
@@ -40,9 +50,15 @@ public class EmployeeListener {
 //		processEmployee(emp);
 //	}
 	
+	/**
+	 * JMS queue message listener implemenatation
+	 * 
+	 * @param empVO
+	 * @throws JsonProcessingException
+	 */
 	@JmsListener(destination = "${emp.jms.queue}")
-	public void getEmployeeQueueListener1(EmployeeVO empVO) throws JsonProcessingException {
-		log.info("Employee queue listener1: {}", mapper.writeValueAsString(empVO));
+	public void getEmployeeQueueListener(EmployeeVO empVO) throws JsonProcessingException {
+		log.info("Employee queue listener: {}", mapper.writeValueAsString(empVO));
 		
 		processEmployee(empVO);
 	}
@@ -54,6 +70,12 @@ public class EmployeeListener {
 //		processEmployee(emp);
 //	}
 	
+	/**
+	 * processing employee
+	 * 
+	 * @param employeeVO
+	 * @throws JsonProcessingException
+	 */
 	public void processEmployee(EmployeeVO employeeVO) throws JsonProcessingException {
 		log.info("Employee processing: {}", mapper.writeValueAsString(employeeVO));
 		

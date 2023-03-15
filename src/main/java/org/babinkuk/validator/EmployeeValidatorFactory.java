@@ -16,8 +16,8 @@ public class EmployeeValidatorFactory {
 	
 	public EmployeeValidator getValidator(ValidatorType type) {
 		
-		log.info("type={}", type);
-		String beanName = type != null ? "validator." + type : "validator.BASIC";
+		log.info("validatorType={}", type);
+		String beanName = "validator." + (type != null ? type : ValidatorType.ROLE_EMPLOYEE);
 		
 		EmployeeValidator validator = applicationContext.getBean(beanName, EmployeeValidator.class);
 		
@@ -28,14 +28,4 @@ public class EmployeeValidatorFactory {
 		return validator;
 	}
 	
-	/*public EmployeeValidator getValidator() {
-		
-		EmployeeValidator validator = applicationContext.getBean(EmployeeValidator.class);
-		
-		if (validator == null) {
-			throw new IllegalStateException("Cannot acquire validator instance");
-		}
-		
-		return validator;
-	}*/
 }

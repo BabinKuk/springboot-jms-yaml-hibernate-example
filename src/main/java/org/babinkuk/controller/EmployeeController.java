@@ -1,6 +1,7 @@
 package org.babinkuk.controller;
 
 import org.babinkuk.service.EmployeeService;
+import org.babinkuk.validator.ActionType;
 import org.babinkuk.validator.EmployeeValidatorFactory;
 import org.babinkuk.validator.ValidatorType;
 import org.babinkuk.vo.EmployeeVO;
@@ -72,7 +73,7 @@ public class EmployeeController {
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true, ActionType.CREATE);
 		
 		try {
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
@@ -100,7 +101,7 @@ public class EmployeeController {
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true, ActionType.CREATE);
 				
 		try {
 	        //return new ResponseEntity<>(MESSAGE_SENT_TO_QUEUE, HttpStatus.OK);
@@ -125,7 +126,7 @@ public class EmployeeController {
 			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployeeTopic({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false, ActionType.UPDATE);
 		
 		try {
 			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, true)));
@@ -148,7 +149,7 @@ public class EmployeeController {
 			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployeeQueue({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false, ActionType.UPDATE);
 		
 		try {
 			return ResponseEntity.of(Optional.ofNullable(employeeService.sendEmployee(employeeVO, false)));
@@ -204,7 +205,7 @@ public class EmployeeController {
 		// this is to force a save of new item ... instead of update
 		employeeVO.setId(0);
 		
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, true, ActionType.CREATE);
 		
 		//return employee;
 		return ResponseEntity.of(Optional.ofNullable(employeeService.saveEmployee(employeeVO)));
@@ -223,7 +224,7 @@ public class EmployeeController {
 			@RequestParam(name="validationType", required = false) ValidatorType validationType) throws JsonProcessingException {
 		log.info("Called EmployeeController.updateEmployee({})", mapper.writeValueAsString(employeeVO));
 
-		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false);
+		employeeVO = validatorFactory.getValidator(validationType).validate(employeeVO, false, ActionType.UPDATE);
 
 //		Employee dbEmployee = employeeService.findById(employee.getId());
 //		
@@ -247,11 +248,7 @@ public class EmployeeController {
 			@RequestParam(name="validationType", required = false) ValidatorType validationType) {
 		log.info("Called EmployeeController.deleteEmployee(employeeId={}, validationType={})", employeeId, validationType);
 		
-		//if (validationType != null) {
-			EmployeeVO employeeVO = validatorFactory.getValidator(validationType).validate(employeeId);
-		//} else {
-		//	EmployeeVO employeeVO = validatorFactory.getValidator().validate(employeeId);
-		//}
+		EmployeeVO employeeVO = validatorFactory.getValidator(validationType).validate(employeeId, ActionType.DELETE);
 		
 		return ResponseEntity.of(Optional.ofNullable(employeeService.deleteEmployee(employeeId)));
 	}

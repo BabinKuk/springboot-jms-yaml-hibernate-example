@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.exception.EmployeeValidationException;
-import org.babinkuk.service.EmployeeService;
 import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,9 +14,6 @@ import org.springframework.stereotype.Component;
 public class EmployeeValidatorHelper {
 	
 	private final Logger log = LogManager.getLogger(getClass());
-	
-	@Autowired
-	private EmployeeService employeeService;
 	
 	@Autowired
 	private BusinessValidator validator;
@@ -54,7 +50,7 @@ public class EmployeeValidatorHelper {
 		EmployeeValidationException e = new EmployeeValidationException("Validation failed");
 		
 		for (ValidatorException validationException : exceptions) {
-			log.error(validationException.getErrorCode().getMessage());
+			//log.error(validationException.getErrorCode().getMessage());
 			e.addValidationError(validationException.getErrorCode().getMessage());
 		}
 		

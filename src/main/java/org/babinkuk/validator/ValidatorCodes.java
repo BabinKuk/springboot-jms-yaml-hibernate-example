@@ -6,7 +6,8 @@ public enum ValidatorCodes {
 	ERROR_CODE_EMAIL_EMPTY("Employee email is empty"),
 	ERROR_CODE_EMAIL_INVALID("Employee email is invalid"),
 	ERROR_CODE_EMAIL_ALREADY_EXIST("Employee with same email already exists"),
-	ERROR_CODE_EMPLOYEE_INVALID("Employee not found in database");
+	ERROR_CODE_EMPLOYEE_INVALID("Employee not found in database"),
+	ERROR_CODE_ACTION_INVALID("Action %s not enabled for role");
 	
 	private String message;
 	

@@ -81,7 +81,7 @@ public class EmployeeListener {
 		
 		// in case id is passed in json, set to 0
 		// this is to force a save of new item ... instead of update
-		employeeVO.setId(0);
+		//employeeVO.setId(0);
 		
 		employeeService.saveEmployee(employeeVO);
 	}

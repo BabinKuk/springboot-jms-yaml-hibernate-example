@@ -27,65 +27,46 @@ private final Logger log = LogManager.getLogger(getClass());
 	private EmployeeValidatorHelper validatorHelper;
 	
 	@Override
-	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert) throws EmployeeValidationException {
+	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert, ActionType action) throws EmployeeValidationException {
 		log.info("ROLE_MANAGER validating employee");
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
-		exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
-		
-		/*
-		try {
-			validatorHelper.validateFirstName(employeeVO.getFirstName());
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		try {
-			validatorHelper.validateLastName(employeeVO.getLastName());
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		try {
-			validatorHelper.validateEmail(employeeVO);
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		if (!isInsert) {
-			try {
-				validatorHelper.employeeExists(employeeVO);
-			} catch (ValidatorException e) {
-				exceptionList.add(e);
-			}
-		}
-		
-		EmployeeValidationException e = new EmployeeValidationException("Validation failed");
-		
-		for (ValidatorException validationException : exceptionList) {
-			log.error(validationException.getErrorCode().getMessage());
-			e.addValidationError(validationException.getErrorCode().getMessage());
-		}
-		
-		if (e.hasErrors()) {
+		if (ActionType.DELETE == action) {
+			log.info("delete action disabled");
+			
+			String message = String.format(ValidatorCodes.ERROR_CODE_ACTION_INVALID.getMessage(), action);
+			EmployeeValidationException e = new EmployeeValidationException(message);
 			throw e;
+		
+		} else {
+			exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
 		}
-		*/
+		
 		return employeeVO;
 	}
 	
 	@Override
-	public EmployeeVO validate(int employeeId) throws EmployeeNotFoundException {
+	public EmployeeVO validate(int employeeId, ActionType action) throws EmployeeNotFoundException {
 		log.info("ROLE_MANAGER Validating employee(employeeId={})", employeeId);
 		
 		EmployeeVO employeeVO = null;
 		
-		try {
-			employeeVO = validatorHelper.validate(employeeId);
-		} catch (EmployeeNotFoundException e) {
-			log.error(e.getMessage());
+		// DELETE action disabled
+		if (ActionType.DELETE == action) {
+			log.info("delete action disabled");
+			
+			String message = String.format(ValidatorCodes.ERROR_CODE_ACTION_INVALID.getMessage(), action);
+			EmployeeValidationException e = new EmployeeValidationException(message);
 			throw e;
+		
+		} else {
+			try {
+				employeeVO = validatorHelper.validate(employeeId);
+			} catch (EmployeeNotFoundException e) {
+				log.error(e.getMessage());
+				throw e;
+			}
 		}
 		
 		return employeeVO;

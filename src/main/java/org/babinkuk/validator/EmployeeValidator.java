@@ -9,16 +9,17 @@ public interface EmployeeValidator {
 	/** 
 	 * @param employee
 	 * @param isInsert
+	 * @param action
 	 * @return
 	 * @throws EmployeeValidationException
 	 */
-	public EmployeeVO validate(EmployeeVO employee, boolean isInsert) throws EmployeeValidationException;
+	public EmployeeVO validate(EmployeeVO employee, boolean isInsert, ActionType action) throws EmployeeValidationException;
 
 	/**
 	 * @param id
 	 * @return
 	 * @throws EmployeeNotFoundException
 	 */
-	public EmployeeVO validate(int id) throws EmployeeNotFoundException;
+	public EmployeeVO validate(int id, ActionType action) throws EmployeeNotFoundException;
 
 }

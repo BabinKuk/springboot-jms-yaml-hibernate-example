@@ -27,64 +27,45 @@ private final Logger log = LogManager.getLogger(getClass());
 	private EmployeeValidatorHelper validatorHelper;
 	
 	@Override
-	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert) throws EmployeeValidationException {
+	public EmployeeVO validate(EmployeeVO employeeVO, boolean isInsert, ActionType action) throws EmployeeValidationException {
 		log.info("ROLE_EMPLOYEE validating employee");
 		
 		List<ValidatorException> exceptionList = new LinkedList<ValidatorException>();
 		
-		exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
-		
-		/*
-		try {
-			validatorHelper.validateFirstName(employeeVO.getFirstName());
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		try {
-			validatorHelper.validateLastName(employeeVO.getLastName());
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		try {
-			validatorHelper.validateEmail(employeeVO);
-		} catch (ValidatorException e) {
-			exceptionList.add(e);
-		}
-		
-		if (!isInsert) {
-			try {
-				validatorHelper.employeeExists(employeeVO);
-			} catch (ValidatorException e) {
-				exceptionList.add(e);
-			}
-		}
-		
-		EmployeeValidationException e = new EmployeeValidationException("Validation failed");
-		
-		for (ValidatorException validationException : exceptionList) {
-			log.error(validationException.getErrorCode().getMessage());
-			e.addValidationError(validationException.getErrorCode().getMessage());
-		}
-		
-		if (e.hasErrors()) {
+		// only READ action enabled
+		if (ActionType.READ == action) {
+			log.info("read action only");
+			exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
+		} else {
+			//String message = String.format("Employee with id=%s not found.", id);
+			String message = String.format(ValidatorCodes.ERROR_CODE_ACTION_INVALID.getMessage(), action);
+			EmployeeValidationException e = new EmployeeValidationException(message);
 			throw e;
 		}
-		*/
+		
 		return employeeVO;
 	}
 
 	@Override
-	public EmployeeVO validate(int employeeId) throws EmployeeNotFoundException {
+	public EmployeeVO validate(int employeeId, ActionType action) throws EmployeeNotFoundException, EmployeeValidationException {
 		log.info("ROLE_EMPLOYEE Validating employee(employeeId={})", employeeId);
 		
 		EmployeeVO employeeVO = null;
 		
-		try {
-			employeeVO = validatorHelper.validate(employeeId);
-		} catch (EmployeeNotFoundException e) {
-			log.error(e.getMessage());
+		// only READ action enabled
+		if (ActionType.READ == action) {
+			log.info("read action only");
+			
+			try {
+				employeeVO = validatorHelper.validate(employeeId);
+			} catch (EmployeeNotFoundException e) {
+				log.error(e.getMessage());
+				throw e;
+			}
+		
+		} else {
+			String message = String.format(ValidatorCodes.ERROR_CODE_ACTION_INVALID.getMessage(), action);
+			EmployeeValidationException e = new EmployeeValidationException(message);
 			throw e;
 		}
 		

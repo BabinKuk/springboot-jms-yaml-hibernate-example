@@ -8,6 +8,8 @@ import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.exception.EmployeeValidationException;
 import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -47,17 +49,6 @@ public class EmployeeValidatorHelper {
 			}
 		}
 		
-		EmployeeValidationException e = new EmployeeValidationException("Validation failed");
-		
-		for (ValidatorException validationException : exceptions) {
-			//log.error(validationException.getErrorCode().getMessage());
-			e.addValidationError(validationException.getErrorCode().getMessage());
-		}
-		
-		if (e.hasErrors()) {
-			throw e;
-		}
-
 		return exceptions;
 	}
 	

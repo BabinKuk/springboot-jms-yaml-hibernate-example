@@ -2,10 +2,7 @@ package org.babinkuk.exception;
 
 public class ApplicationServiceException extends RuntimeException {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 	public ApplicationServiceException(String message) {
         super(message);

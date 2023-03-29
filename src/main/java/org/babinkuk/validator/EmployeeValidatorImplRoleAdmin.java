@@ -9,6 +9,8 @@ import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.exception.EmployeeValidationException;
 import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,6 +26,9 @@ public class EmployeeValidatorImplRoleAdmin implements EmployeeValidator {
 private final Logger log = LogManager.getLogger(getClass());
 	
 	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
 	private EmployeeValidatorHelper validatorHelper;
 	
 	@Override
@@ -35,6 +40,18 @@ private final Logger log = LogManager.getLogger(getClass());
 		// all action types are enabled
 		exceptionList.addAll(validatorHelper.validate(employeeVO, isInsert));
 		
+		EmployeeValidationException e = new EmployeeValidationException("Validation failed");
+		
+		for (ValidatorException validationException : exceptionList) {
+			//log.error(validationException.getErrorCode().getMessage());
+			//e.addValidationError(validationException.getErrorCode().getMessage());
+			e.addValidationError(messageSource.getMessage(validationException.getErrorCode().getMessage(), new Object[] {}, LocaleContextHolder.getLocale()));
+		}
+		
+		if (e.hasErrors()) {
+			throw e;
+		}
+
 		return employeeVO;
 	}
 

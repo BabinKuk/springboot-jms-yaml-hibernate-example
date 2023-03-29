@@ -5,9 +5,6 @@ import java.util.List;
 
 public class EmployeeValidationException extends EmployeeException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private List<String> validationErorrs;

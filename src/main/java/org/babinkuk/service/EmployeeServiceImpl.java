@@ -16,6 +16,8 @@ import org.babinkuk.exception.EmployeeNotFoundException;
 import org.babinkuk.mapper.EmployeeMapper;
 import org.babinkuk.vo.EmployeeVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -28,10 +30,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	private final Logger log = LogManager.getLogger(getClass());
 	
-	private static String MESSAGE_SUCCESS = "Employee JMS sending success";
-	private static String MESSAGE_FAILED = "Employee JMS sending failed";
-	private static String EMPLOYEE_SAVE_SUCCESS = "Employee saving success";
-	private static String EMPLOYEE_DELETE_SUCCESS = "Employee delete success";
+	private static String MESSAGE_SUCCESS = "message_success";
+	private static String MESSAGE_FAILED = "message_failure";
+	private static String EMPLOYEE_SAVE_SUCCESS = "employee_save_success";
+	private static String EMPLOYEE_DELETE_SUCCESS = "employee_delete_success";
 	
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -46,12 +48,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private EmployeeMapper employeeMapper;
 	
 	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
 		this.employeeRepository = employeeRepository;
 	}
 	
 	public EmployeeServiceImpl() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	private String getMessage(String str) {
+		return messageSource.getMessage(str, new Object[] {}, LocaleContextHolder.getLocale());
 	}
 	
 	@Override
@@ -71,7 +80,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 			return employeeVO;
 		} else {
 			// employee not found
-			String message = String.format("Employee with id=%s not found.", id);
+			//String message = String.format("Employee with id=%s not found.", id);
+			String message = String.format(getMessage("error_code_employee_id_not_found"), id);
 			log.warn(message);
 			throw new EmployeeNotFoundException(message);
 		}
@@ -94,7 +104,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 			log.info("empVO ({})", employeeVO);
 		} else {
 			// employee not found
-			String message = String.format("Employee with email=%s not found.", email);
+			//String message = String.format("Employee with email=%s not found.", email);
+			String message = String.format(getMessage("error_code_employee_email_not_found"), email);
 			log.warn(message);
 			//throw new EmployeeNotFoundException(message);
 		}
@@ -108,7 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		ApiResponse response = new ApiResponse();
 		
 		response.setStatus(HttpStatus.OK);
-		response.setMessage(EMPLOYEE_SAVE_SUCCESS);
+		response.setMessage(getMessage(EMPLOYEE_SAVE_SUCCESS));
 		
 		Employee employee = null;
 		
@@ -127,7 +138,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		ApiResponse response = new ApiResponse();
 		
 		response.setStatus(HttpStatus.OK);
-		response.setMessage(EMPLOYEE_DELETE_SUCCESS);
+		response.setMessage(getMessage(EMPLOYEE_DELETE_SUCCESS));
 		
 		employeeRepository.deleteById(id);
 		
@@ -160,7 +171,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				jmsTemplate.convertAndSend(empQueue, employeeVO);
 			}
 			response.setStatus(HttpStatus.OK);
-	        response.setMessage(MESSAGE_SUCCESS);
+	        response.setMessage(getMessage(MESSAGE_SUCCESS));
 	        
 		} catch (JMSException e) {
 			e.printStackTrace();
@@ -171,7 +182,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			e.printStackTrace();
 			
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-	        response.setMessage(MESSAGE_FAILED);
+	        response.setMessage(getMessage(MESSAGE_FAILED));
 		}
 		
 		return response;

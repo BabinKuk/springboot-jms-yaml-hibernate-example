@@ -1,13 +1,14 @@
 package org.babinkuk.validator;
 
 public enum ValidatorCodes {
-	ERROR_CODE_FIRST_NAME_EMPTY("Employee first name is empty"),
-	ERROR_CODE_LAST_NAME_EMPTY("Employee last name is empty"),
-	ERROR_CODE_EMAIL_EMPTY("Employee email is empty"),
-	ERROR_CODE_EMAIL_INVALID("Employee email is invalid"),
-	ERROR_CODE_EMAIL_ALREADY_EXIST("Employee with same email already exists"),
-	ERROR_CODE_EMPLOYEE_INVALID("Employee not found in database"),
-	ERROR_CODE_ACTION_INVALID("Action %s not enabled for role");
+
+	ERROR_CODE_FIRST_NAME_EMPTY("error_code_first_name_empty"),
+	ERROR_CODE_LAST_NAME_EMPTY("error_code_last_name_empty"),
+	ERROR_CODE_EMAIL_EMPTY("error_code_email_empty"),
+	ERROR_CODE_EMAIL_INVALID("error_code_email_invalid"),
+	ERROR_CODE_EMAIL_ALREADY_EXIST("error_code_email_already_exist"),
+	ERROR_CODE_EMPLOYEE_INVALID("error_code_employee_invalid"),
+	ERROR_CODE_ACTION_INVALID("error_code_action_invalid");
 	
 	private String message;
 	
